@@ -5,14 +5,20 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const RedirectCheck = () => {
+  const { data: session, status } = useSession();
   const router = useRouter();
-  const { data: session } = useSession();
+
+  console.log("xxxx : ", session?.user.username);
+
+  if (status === "loading") {
+    <div>Loading.......</div>;
+  }
 
   useEffect(() => {
-    if (!session?.user.username) {
+    if (!session?.user.username && status === "authenticated") {
       router.push("/setname"); // เปลี่ยน URL ของหน้าเพจที่ต้องการ redirect
     }
-  }, [router, session?.user.username]);
+  }, [router, session?.user.username, status]);
 
   return null;
 };
