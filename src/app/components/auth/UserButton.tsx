@@ -16,6 +16,7 @@ const UserButton = () => {
             height={32}
             className="rounded-full w-8 h-8 mx-auto cursor-pointer"
           />
+          <label htmlFor="">{session.user.username}</label>
           <button className="text-sm" onClick={() => signOut()}>
             Logout
           </button>

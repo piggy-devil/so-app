@@ -1,29 +1,51 @@
 import { getToken } from "next-auth/jwt";
+import { withAuth } from "next-auth/middleware";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  const user = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+export default withAuth(
+  async function middleware(request: NextRequest) {
+    const { nextUrl } = request;
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
 
-  const isLoggedIn = !!user;
-  console.log("isLoggedIn : ", isLoggedIn);
+    // ตรวจสอบว่า token มีหรือไม่ ถ้าไม่มีให้รีไดเรกไปที่หน้า sign-in
+    if (!token) {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
 
-  // Get the pathname of the request
-  const { pathname } = request.nextUrl;
+    // ตรวจสอบว่า token มี username หรือไม่ ถ้าไม่มีให้รีไดเรกไปที่หน้า setname
+    // if (!token?.username) {
+    //   if (nextUrl.pathname !== "/setname") {
+    //     return NextResponse.redirect(new URL("/setname", request.url));
+    //   } else {
+    //     return NextResponse.next();
+    //   }
+    // }
 
-  // If the user is logged in and tries to access the sign-in page, redirect to home page
-  const isSignin = pathname.startsWith("/sign-in");
-  if (isSignin && user) {
-    return NextResponse.redirect(new URL("/", request.url));
+    // ปล่อยให้การร้องขอดำเนินต่อไปถ้ามี username
+    // return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => {
+        // อนุญาตถ้า token มีอยู่
+        return !!token;
+      },
+    },
   }
+  //   {
+  //     callbacks: {
+  //       authorized: async ({ req, token }) => {
+  //         if (req.nextUrl.pathname.startsWith("/admin"))
+  //           return token?.role === "admin";
+  //         return !!token;
+  //       },
+  //     },
+  //   }
+);
 
-  // If the pathname starts with /protected and the user is not an admin, redirect to the home page
-  if (pathname.startsWith("/protected") && (!user || user.role !== "admin")) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  // Continue with the request if the user is an admin or the route is not protected
-  return NextResponse.next();
-}
+export const config = {
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+};
