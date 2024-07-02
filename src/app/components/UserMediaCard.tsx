@@ -1,13 +1,14 @@
+import { User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
 type Props = {
-  userId: string;
+  user: User;
 };
 
 const items = [1, 2, 3, 4, 5, 6, 7, 8];
 
-const UserMediaCard = ({ userId }: Props) => {
+const UserMediaCard = ({ user }: Props) => {
   return (
     <div className="p-4 bg-white rounded-lg shadow-md text-sm flex flex-col gap-4">
       {/* TOP */}

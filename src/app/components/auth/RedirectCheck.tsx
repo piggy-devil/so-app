@@ -8,8 +8,6 @@ const RedirectCheck = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  console.log("xxxx : ", session?.user.username);
-
   if (status === "loading") {
     <div>Loading.......</div>;
   }

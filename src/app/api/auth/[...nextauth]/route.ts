@@ -71,6 +71,7 @@ export const authOptions: AuthOptions = {
           id: user.id,
           username: user.username,
           role: user.role,
+          avatar: user.avatar,
         };
       }
 
@@ -79,6 +80,7 @@ export const authOptions: AuthOptions = {
       });
       token.username = dbUser?.username!;
       token.role = dbUser?.role!;
+      token.avatar = dbUser?.avatar!;
 
       return token;
     },
@@ -90,6 +92,7 @@ export const authOptions: AuthOptions = {
           id: token.id,
           username: token.username,
           role: token.role,
+          avatar: token.avatar,
         },
       };
 
@@ -106,8 +109,8 @@ export const authOptions: AuthOptions = {
   },
   events: {
     async signIn({ user, account, profile, isNewUser }) {
-      // console.log("user : ", user);
-      // console.log("account : ", account);
+      console.log("user.id : ", user.id);
+      console.log("account.userId : ", account?.userId);
       // console.log("profile : ", profile);
       console.log("isNewUser : ", isNewUser);
       if (isNewUser && account?.provider === "google") {
