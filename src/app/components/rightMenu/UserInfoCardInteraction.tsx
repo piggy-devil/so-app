@@ -1,5 +1,8 @@
 "use client";
 
+import { switchFollow } from "@/lib/actions";
+import { useOptimistic, useState } from "react";
+
 type Props = {
   userId: string;
   currentUserId: string;
@@ -15,20 +18,49 @@ const UserInfoCardInteraction = ({
   isFollowing,
   isFollowingSent,
 }: Props) => {
+  const [userState, setUserState] = useState({
+    following: isFollowing,
+    blocked: isUserBlocked,
+    followingRequestSent: isFollowingSent,
+  });
+
+  const follow = async () => {
+    switchOptimisticState("");
+    try {
+      await switchFollow(userId);
+      setUserState((prev) => ({
+        ...prev,
+        following: prev.following && false,
+        followingRequestSent:
+          !prev.following && !prev.followingRequestSent ? true : false,
+      }));
+    } catch (error) {}
+  };
+
+  const [optimisticState, switchOptimisticState] = useOptimistic(
+    userState,
+    (state) => ({
+      ...state,
+      following: state.following && false,
+      followingRequestSent:
+        !state.following && !state.followingRequestSent ? true : false,
+    })
+  );
+
   return (
     <>
-      <form action="" className="">
+      <form action={follow} className="">
         <button className="w-full bg-blue-500 text-white text-sm rounded-md p-2">
-          {isFollowing
+          {optimisticState.following
             ? "Following"
-            : isFollowingSent
+            : optimisticState.followingRequestSent
             ? "Friend Request Sent"
             : "Follow"}
         </button>
       </form>
       <form action="" className="self-end">
         <span className="text-red-400 text-xs cursor-pointer">
-          {isUserBlocked ? "Unblock User" : "Block User"}
+          {optimisticState.blocked ? "Unblock User" : "Block User"}
         </span>
       </form>
     </>
