@@ -12,7 +12,7 @@ export default function SetUsername() {
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.username) {
-      router.push(`/profile/${session.user.id}`);
+      router.push(`/profile/${session.user.username}`);
     }
   }, [session, status, router]);
 
@@ -49,7 +49,7 @@ export default function SetUsername() {
 
       if (data.success) {
         update({ username: username });
-        router.push(`/profile/${session.user.id}`);
+        router.push(`/profile/${session.user.username}`);
       }
       if (data.error) {
         setError(data.error || "An error occurred");
