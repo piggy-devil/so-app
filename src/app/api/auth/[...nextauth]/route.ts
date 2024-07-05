@@ -71,7 +71,6 @@ export const authOptions: AuthOptions = {
           id: user.id,
           username: user.username,
           role: user.role,
-          avatar: user.avatar,
         };
       }
 
@@ -110,13 +109,18 @@ export const authOptions: AuthOptions = {
   events: {
     async signIn({ user, account, profile, isNewUser }) {
       console.log("user.id : ", user.id);
-      console.log("account.userId : ", account?.userId);
-      // console.log("profile : ", profile);
+      console.log("account : ", account);
       console.log("isNewUser : ", isNewUser);
+      console.log("profile : ", profile);
+
       if (isNewUser && account?.provider === "google") {
         console.log("google");
-        // Redirect to a username form after first sign in
-        // Note: This needs to be handled in the UI, e.g., by checking if the session has a username
+
+        // สำหรับ user ใหม่ เก็บรูป profile จาก Provider ไว้ใน field avatar
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { avatar: profile?.image },
+        });
       }
     },
   },
