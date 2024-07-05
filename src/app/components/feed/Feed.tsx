@@ -49,12 +49,13 @@ const Feed = async ({ username }: Props) => {
 
     // id ของคนที่เรากำลังติดตาม
     const followingIds = following.map((f) => f.followingId); // ทำให้เห็น โพสของคนที่เรากำลังติดตาม
+    const ids = [userId, ...followingIds];
 
     console.log("followingIds : ", followingIds);
     posts = await prisma.post.findMany({
       where: {
         userId: {
-          in: followingIds,
+          in: ids,
         },
       },
       include: {

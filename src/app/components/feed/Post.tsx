@@ -32,6 +32,7 @@ const Post = ({ post }: { post: FeedPostType }) => {
       </div>
       {/* DESC */}
       <div className="flex flex-col gap-4">
+        <p>{post.desc}</p>
         {post.img && (
           <div className="w-full min-h-96 relative">
             <Image
@@ -42,7 +43,6 @@ const Post = ({ post }: { post: FeedPostType }) => {
             />
           </div>
         )}
-        <p>{post.desc}</p>
       </div>
       {/* INTERACTION */}
       <PostInteraction
